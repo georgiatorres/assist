@@ -8,6 +8,7 @@ import { Mail, Phone, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
+import emailConfig from '@/config/emailConfig';
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, 'Nome deve ter pelo menos 2 caracteres').max(100, 'Nome muito longo'),
@@ -37,29 +38,40 @@ const Contato = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrors({});
 
     try {
       const validatedData = contactSchema.parse(formData);
-      
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: "Mensagem enviada!",
-        description: "Recebemos sua mensagem, entraremos em contato em breve!",
+
+      // Enviar para o backend customizado
+      const response = await fetch(`${emailConfig.customBackend.apiUrl}${emailConfig.customBackend.emailEndpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-      
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        message: '',
-      });
+
+      if (response.ok) {
+        toast({
+          title: "Mensagem enviada!",
+          description: "Recebemos sua mensagem, entraremos em contato em breve!",
+        });
+
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          message: '',
+        });
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao enviar mensagem');
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};
@@ -72,7 +84,7 @@ const Contato = () => {
       } else {
         toast({
           title: "Erro ao enviar",
-          description: "Ocorreu um erro ao enviar sua mensagem. Tente novamente.",
+          description: error instanceof Error ? error.message : "Ocorreu um erro ao enviar sua mensagem. Tente novamente.",
           variant: "destructive",
         });
       }
@@ -216,7 +228,7 @@ const Contato = () => {
                   Envie sua Mensagem
                 </h2>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleFormSubmit} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">Nome *</Label>
@@ -294,10 +306,10 @@ const Contato = () => {
                     )}
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    variant="cta" 
-                    size="xl" 
+                  <Button
+                    type="submit"
+                    variant="cta"
+                    size="xl"
                     className="w-full"
                     disabled={isSubmitting}
                   >

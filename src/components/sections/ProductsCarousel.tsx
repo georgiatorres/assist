@@ -15,7 +15,6 @@ const products = [
     isNew: true,
     href: '/segmentos/sgcom',
     color: 'secondary',
-    videoUrl: 'https://www.youtube.com/embed/VIDEO_ID', // Substitua pelo ID do vídeo do SGCOM
   },
   {
     id: 'calcexpress',
@@ -183,52 +182,33 @@ const ProductsCarousel = () => {
                     </Button>
                   </div>
 
-                  {/* Right - Features or Video */}
+                  {/* Right - Features */}
                   <div className="p-8 lg:p-12 bg-card">
-                    {currentProduct.videoUrl ? (
-                      <div className="h-full flex flex-col">
-                        <h4 className="font-heading font-semibold text-xl text-foreground mb-4">
-                          Veja como funciona
-                        </h4>
-                        <div className="flex-1 rounded-2xl overflow-hidden bg-muted">
-                          <iframe
-                            src={currentProduct.videoUrl}
-                            title={`Vídeo do ${currentProduct.name}`}
-                            className="w-full h-full min-h-[250px]"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <h4 className="font-heading font-semibold text-xl text-foreground mb-6">
-                          Principais Funcionalidades
-                        </h4>
-                        <ul className="space-y-4">
-                          {currentProduct.features.map((feature, index) => (
-                            <motion.li
-                              key={feature}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                              className="flex items-center gap-3"
-                            >
-                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                currentProduct.color === 'secondary'
-                                  ? 'bg-secondary/10 text-secondary'
-                                  : 'bg-primary/10 text-primary'
-                              }`}>
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                              </div>
-                              <span className="text-foreground font-medium">{feature}</span>
-                            </motion.li>
-                          ))}
-                        </ul>
-                      </>
-                    )}
+                    <h4 className="font-heading font-semibold text-xl text-foreground mb-6">
+                      Principais Funcionalidades
+                    </h4>
+                    <ul className="space-y-4">
+                      {currentProduct.features.map((feature, index) => (
+                        <motion.li
+                          key={feature}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="flex items-center gap-3"
+                        >
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                            currentProduct.color === 'secondary'
+                              ? 'bg-secondary/10 text-secondary'
+                              : 'bg-primary/10 text-primary'
+                          }`}>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <span className="text-foreground font-medium">{feature}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </motion.div>
